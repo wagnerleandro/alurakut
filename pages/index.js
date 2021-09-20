@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 import React from 'react';
 import nookies from 'nookies';
 import jwt from 'jsonwebtoken';
-import { userCheck } from '../src/functions'
+import { userCheck } from '../src/functions';
 
 function ProfileSidebar(props) {
   return (
@@ -236,7 +236,16 @@ export async function getServerSideProps(context) {
   const cookies = nookies.get(context);
   const token = cookies.USER_TOKEN;
 
-  const isAuthenticated = await userCheck(token);
+  const  {isAuthenticated}  = await fetch(
+    'https://alurakut.vercel.app/api/auth',
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  )
+    .then((res) => res.json())
+    .catch((err) => console.error(err));
 
   if (!isAuthenticated) {
     return {
